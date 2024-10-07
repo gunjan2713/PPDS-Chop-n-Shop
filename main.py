@@ -6,7 +6,7 @@ import pymongo
 load_dotenv()
 
 mongodb_uri = os.getenv("MONGO_URI")
-client = pymongo.MongoClient(mongodb_uri)
+client = pymongo.MongoClient("mongodb+srv://ds6704:kZE4QYFVXOFUBFec@cluster0.0i9iv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 db = client["chop-n-shop"]
 users_collection = db["users"]
 stores_collection = db["stores"]
@@ -23,23 +23,23 @@ except Exception as e:
 def add_user():
 
     #getting user inputs
-    first_name = input("Enter First Name: ")
-    email = input("Enter Email: ")
-    budget = float(input("Enter Budget: "))
-    dietary_restrictions = input("Enter Dietary Restrictions (comma-separated): ").split(",")
-    allergies = input("Enter Allergies (comma-separated): ").split(",")
-    food_request = input("Enter Food Request (comma-separated): ").split(",")
-    preferred_stores = input("Enter Preferred Stores (comma-separated): ").split(",")
+    first_name = input("Enter first name: ")
+    email = input("Enter email: ")
+    budget = float(input("Enter budget: "))
+    dietary_restrictions = input("Enter dietary restrictions (comma-seperated) or 'none' if none: ")
+    allergies = input("Enter allergies (comma-separated) or 'none' if none: ")
+    food_request = input("Enter food requests (comma-separated): ").split(",")
+    preferred_stores = input("Enter preferred stores (comma-separated) or 'none' if none: ")
     
     #inserting into user documents
-    user_document = {,
+    user_document = {
         "First_name": first_name,
         "Email": email,
         "Budget": budget,
-        "Dietary_restrictions": [d.strip() for d in dietary_restrictions],
-        "Allergies": [a.strip() for a in allergies],
+        "Dietary_restrictions":[] if dietary_restrictions.lower() == "none" else [dr.strip() for dr in dietary_restrictions.split(",")],
+        "Allergies": [] if allergies.lower() == "none" else [a.strip() for a in allergies.split(",")],
         "Food_request": [f.strip() for f in food_request],
-        "Preferred_stores": [s.strip() for s in preferred_stores]
+        "Preferred_stores": [] if preferred_stores.lower() == "none" else [s.strip() for s in preferred_stores.split(",")]
     }
     
     try:
@@ -48,12 +48,15 @@ def add_user():
     except pymongo.errors.PyMongoError as e:
         print(f"An error occurred while adding the user: {e}")
 
-add_user()
-
 #creating store documents
 
 #creating item documents
 
 #creating recipe documents
 
-client.close()
+def main():
+    add_user()
+    client.close()
+
+if __name__ == "__main__":
+    main()
